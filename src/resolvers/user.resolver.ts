@@ -326,7 +326,8 @@ export class UserResolver {
 		// console.log(user);
 
 		if (!user.isVerified) {
-			const updateUser = await getMongoRepository(User).save(
+			const updateUser = await getMongoRepository(User).update(
+				{ _id: user._id },
 				new User({
 					...user,
 					isVerified: true

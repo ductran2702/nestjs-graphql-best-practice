@@ -31,16 +31,18 @@ const MLAB_URL =
 	`mongodb+srv://${MLAB_USER}:${MLAB_PASS}@${MLAB_HOST}/${MLAB_DATABASE}?retryWrites=true&w=majority`
 
 // mongodb
-const MONGO_URL: string = +process.env.MONGO_PORT
-	? `mongodb://localhost:${process.env.MONGO_PORT}`
-	: MLAB_URL
 const MONGO_PORT: number = +process.env.MONGO_PORT || 11049
+const MONGO_DATABASE = process.env.MONGO_DATABASE || 'golfAI'
+const MONGO_URL: string = MONGO_PORT
+	? `mongodb://localhost:${process.env.MONGO_PORT}/${MONGO_DATABASE}`
+	: MLAB_URL
 const MONGO_DB: string = process.env.MONGO_PORT ? 'nestjs-v7' : MLAB_DATABASE
 
 // typeorm
 const enviroment = {
 	development: {
-		url: MLAB_URL
+		url: MONGO_URL,
+		database: MONGO_DATABASE
 	},
 	testing: {
 		url: MLAB_URL

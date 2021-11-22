@@ -1,13 +1,13 @@
 import { MongoClient } from 'mongodb'
 
-import { MLAB_URL, MLAB_DATABASE } from './environments'
+import { TYPEORM } from './environments'
 
 async function main() {
 	console.log('🚀  Server ready')
 
-	const url = MLAB_URL!
+	const url = TYPEORM.url!
 
-	const dbName = MLAB_DATABASE!
+	const dbName = TYPEORM.database!
 
 	const client = new MongoClient(url, {
 		// useUnifiedTopology: true,
