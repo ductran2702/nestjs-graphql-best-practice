@@ -30,7 +30,7 @@ class ValidateDirective extends SchemaDirectiveVisitor {
 		field.resolve = async function(...args) {
 			const { input } = args[1]
 
-			let UserValidationSchema = {
+			const UserValidationSchema = {
 				// using interface here is not required, its just for type-safety
 				name: 'myUserSchema', // this is required, and must be unique
 				properties: {

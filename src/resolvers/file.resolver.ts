@@ -39,8 +39,8 @@ export class FileResolver {
 		const { filename, createReadStream, mimetype } = file
 		// console.log(req.headers.host)
 		const convertFilename = `${uuidv4()}.${mimetype.split('/')[1]}`
-		let path
-		path = await new Promise(async (resolve, reject) =>
+
+		const path = await new Promise<string>(async (resolve, reject) =>
 			createReadStream(file).pipe(
 				createWriteStream(`./static/${convertFilename}`)
 					.on('error', err => {

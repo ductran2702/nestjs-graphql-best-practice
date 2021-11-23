@@ -38,14 +38,16 @@ input CreateUserInput {
 	lastName: String!
 	email: String!
 	password: String!
-	gender: Gender!
+	gender: Gender
+	phone: String
 }
 
 input UpdateUserInput {
-	firstName: String!
-	lastName: String!
-	password: String!
-	gender: Gender!
+	firstName: String
+	lastName: String
+	password: String
+	gender: Gender
+	phone: String
 }
 
 input LoginUserInput {
@@ -105,6 +107,7 @@ type User {
 	lastName: String!
 	avatar: String
 	gender: Gender!
+	phone: String
 	resetPasswordToken: String
 	resetPasswordExpires: Float
 	fullName: String @upper @concat(value: "Chnirt")

@@ -101,8 +101,7 @@ async function main() {
 						updatedAt: +new Date()
 					}
 				},
-				{ upsert: true },
-				function(err, res) {}
+				{ upsert: true }
 			)
 		})
 

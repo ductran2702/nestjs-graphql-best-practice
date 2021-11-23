@@ -58,8 +58,6 @@ export class UserResolver {
 
 	@Query()
 	async search(@Args('conditions') conditions: SearchInput): Promise<Result[]> {
-		let result
-
 		const { select, where, order, skip, take } = conditions
 
 		if (Object.keys(where).length > 1) {
@@ -70,7 +68,7 @@ export class UserResolver {
 
 		// const createdAt = { $gte: 0, $lte: new Date().getTime() }
 
-		result = await getMongoRepository(type).find({
+		const result = await getMongoRepository(type).find({
 			where: where[type] && JSON.parse(JSON.stringify(where[type])),
 			order: order && JSON.parse(JSON.stringify(order)),
 			skip,
@@ -83,7 +81,7 @@ export class UserResolver {
 			throw new ForbiddenError('Not found.')
 		}
 
-		return result
+		return result as Result[]
 	}
 
 	@Query()
@@ -228,29 +226,30 @@ export class UserResolver {
 	@Mutation()
 	async updateUser(
 		@Args('_id') _id: string,
-		@Args('input') input: UpdateUserInput
+		@Args('input') input: UpdateUserInput,
+		@Context('currentUser') currentUser: User
 	): Promise<boolean> {
 		try {
+			if (currentUser._id !== _id) {
+				throw new ForbiddenError('Unauthorized')
+			}
 			const { password } = input
 
-			const user = await getMongoRepository(User).findOne({ _id })
-
-			if (!user) {
-				throw new ForbiddenError('User not found.')
+			const updatedObj: any = { ...input }
+			if (password) {
+				const local = {
+					email: currentUser.local.email,
+					password: await hashPassword(password)
+				}
+				updatedObj.local = local
 			}
 
-			const updateUser = await await getMongoRepository(User).save(
-				new User({
-					...user,
-					...input,
-					local: {
-						email: user.local.email,
-						password: await hashPassword(password)
-					}
-				})
+			const UpdateResult = await await getMongoRepository(User).update(
+				{ _id },
+				updatedObj
 			)
 
-			return updateUser ? true : false
+			return UpdateResult.raw.result.ok ? true : false
 		} catch (error) {
 			throw new ApolloError(error)
 		}
@@ -464,15 +463,15 @@ export class UserResolver {
 
 		const date = new Date()
 
-		const updateUser = await getMongoRepository(User).save(
-			new User({
-				...user,
+		const UpdateResult = await getMongoRepository(User).update(
+			{ _id: user._id },
+			{
 				resetPasswordToken: resetPassToken,
 				resetPasswordExpires: date.setHours(date.getHours() + 1) // 1 hour
-			})
+			}
 		)
 
-		return updateUser ? true : false
+		return UpdateResult.raw.result.ok ? true : false
 	}
 
 	@Mutation()
@@ -494,16 +493,16 @@ export class UserResolver {
 			)
 		}
 
-		const updateUser = await getMongoRepository(User).save(
-			new User({
-				...user,
+		const updateUser = await getMongoRepository(User).update(
+			{ _id: user._id },
+			{
 				local: {
 					email: user.local.email,
 					password: await hashPassword(password)
 				},
 				resetPasswordToken: null,
 				resetPasswordExpires: null
-			})
+			}
 		)
 
 		return updateUser ? true : false

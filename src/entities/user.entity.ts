@@ -63,6 +63,10 @@ export class User {
 
 	@Expose()
 	@Column()
+	phone: string
+
+	@Expose()
+	@Column()
 	gender: Gender
 
 	@Expose()

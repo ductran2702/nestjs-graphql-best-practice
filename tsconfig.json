@@ -27,7 +27,12 @@
 			"@validations": ["src/validations"]
 		}
 	},
-	"include": ["src/**/*.ts", "src/services/reviews/index.js", "test"],
+	"include": [
+		"src/**/*.ts", 
+		"src/services/reviews/index.js", 
+		"test",
+		"src/**/*.spec.ts"
+	],
 	"compileOnSave": false,
 	"exclude": [
 		"node_modules",
@@ -35,6 +40,5 @@
 		"document",
 		"dist",
 		"backup",
-		"**/*.spec.ts"
 	]
 }
